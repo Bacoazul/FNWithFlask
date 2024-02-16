@@ -22,6 +22,7 @@
     $(document).ready(function(){
       $("#guess-form").on('submit', function(e){
         e.preventDefault();
+        this.disabled = true;
         $.ajax({
           url: '/',
           data: $('form').serialize(),
@@ -50,6 +51,7 @@
         });
       });
     });
+        this.disabled = false;
     </script>
 </body>
 </html>
