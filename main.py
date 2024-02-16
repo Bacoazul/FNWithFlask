@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 from num2words import num2words
 from gtts import gTTS
 import random
 import time
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # Set a secret key for the session
 
 
 # Convert a number to French words
@@ -15,26 +17,22 @@ def number_to_french_words(number):
 @app.route('/', methods=['GET', 'POST'])
 def display_random_number():
   message = ''
-  global random_num  # Make random_num a global variable so it can be accessed in the /guess route
 
   if request.method == 'POST':
-    user_guess = int(
-        request.form['guess'])  # Get the number the user guessed from the form
-    if user_guess == random_num:
+    user_guess = int(request.form['guess'])
+    if user_guess == session.get('random_num'):
       message = "Congratulations! You guessed the number correctly."
-      translated_num = number_to_french_words(
-          random_num)  # Only translate the number if the guess is correct
+      translated_num = number_to_french_words(session.get('random_num'))
       return jsonify(result=message, translated_num=translated_num)
     else:
       message = "That's not correct, but don't give up! Try again!"
       return jsonify(result=message)
 
-  random_num = random.randint(
-      1, 100)  # Generate a random number between 1 and 100
-  tts = gTTS(text=number_to_french_words(random_num), lang='fr')
+  session['random_num'] = random.randint(1, 100)
+  tts = gTTS(text=number_to_french_words(session.get('random_num')), lang='fr')
   audio_file_path = "static/translated_number.mp3"
-  tts.save(audio_file_path)  # Save audio to a file
-  cache_buster = time.time()  # Current time as a unique value
+  tts.save(audio_file_path)
+  cache_buster = time.time()
 
   return render_template('random_number.html',
                          cache_buster=cache_buster,
@@ -43,17 +41,18 @@ def display_random_number():
 
 @app.route('/guess', methods=['POST'])
 def guess_number():
-  user_guess = int(
-      request.form['guess'])  # Get the number the user guessed from the form
-  if user_guess == random_num:
+  user_guess = int(request.form['guess'])
+  if user_guess == session.get('random_num'):
     return jsonify(result="Congratulations! You guessed the number correctly.")
   else:
     return jsonify(result="That's not correct, but don't give up! Try again!")
 
+
 @app.route('/reveal', methods=['GET'])
 def reveal_number():
-  translated_num = number_to_french_words(random_num)
+  translated_num = number_to_french_words(session.get('random_num'))
   return jsonify(translated_num=translated_num)
+
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0', port=8080, debug=True)
