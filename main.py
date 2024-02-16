@@ -43,9 +43,11 @@ def display_random_number():
 def guess_number():
   user_guess = int(request.form['guess'])
   if user_guess == session.get('random_num'):
+    session.pop('random_num', None)  # Clear the session
     return jsonify(result="Congratulations! You guessed the number correctly.")
   else:
     return jsonify(result="That's not correct, but don't give up! Try again!")
+
 
 
 @app.route('/reveal', methods=['GET'])
