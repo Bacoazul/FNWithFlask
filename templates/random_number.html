@@ -1,59 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Random Number to French Words Converter</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <title>Guess the Number</title>
 </head>
 <body>
-    <h1 id="translated-num"></h1>
-    <p id="numberDisplay"></p>
-    <audio controls>
-        <source src="/static/translated_number.mp3?{{ cache_buster }}" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <form id="guess-form">
-        <label for="guess">Enter your guess:</label><br>
-        <input type="number" id="guess" name="guess" min="1" max="100"><br>
-      <!--<input type="submit" value="Submit">-->
-    </form>
-    <p id="message"></p>
-    <button onclick="location.reload();">Refresh</button>
-    <button id="reveal-btn">Reveal</button>
-    <script>
-    $(document).ready(function(){
-      $("#guess-form").on('submit', function(e){
-        e.preventDefault();
-        this.disabled = true;
-        $.ajax({
-          url: '/',
-          data: $('form').serialize(),
-          type: 'POST',
-          success: function(response){
-            $("#message").text(response.result);
-            if (response.translated_num) {
-              $("#translated-num").text("Random Number: " + response.translated_num);
-            }
-          },
-          error: function(error){
-            console.log(error);
-          }
+  <h1>Guess the Number</h1>
+  <audio controls>
+    <source id="audioSource" src="{{ url_for('static', filename='translated_number.mp3') }}" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <br>
+  <input type="number" id="numberInput" min="1" max="100">
+  <button onclick="revealNumber()">Reveal</button>
+  <br>
+  <button onclick="refreshNumber()">Refresh</button>
+  <p id="message"></p>
+  <script>
+    function refreshNumber() {
+      fetch('/refresh')
+        .then(response => {
+          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
+          document.querySelector('audio').load();
+          document.getElementById('numberInput').value = '';  // Clear the input box
         });
-      });
-      $("#reveal-btn").on('click', function(){
-        $.ajax({
-          url: '/reveal',
-          type: 'GET',
-          success: function(response){
-            $("#translated-num").text("Random Number: " + response.translated_num);
-            $('#numberDisplay').text(response.number);
-          },
-          error: function(error){
-            console.log(error);
-          }
+    }
+
+    function revealNumber() {
+      fetch('/reveal')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('message').textContent = 'The number was ' + data.number + ', which is ' + data.translated_num + ' in French.';
         });
-      });
-    });
-        this.disabled = false;
-    </script>
+    }
+  </script>
 </body>
 </html>
