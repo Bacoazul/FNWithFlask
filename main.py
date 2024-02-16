@@ -16,26 +16,25 @@ def number_to_french_words(number):
 @app.route('/', methods=['GET'])
 def display_random_number():
   session['random_num'] = random.randint(1, 100)
-  tts = gTTS(text=number_to_french_words(session.get('random_num')), lang='fr')
+  session['translated_num'] = number_to_french_words(session.get('random_num'))
+  tts = gTTS(text=session.get('translated_num'), lang='fr')
   audio_file_path = "static/translated_number.mp3"
   tts.save(audio_file_path)
-  return render_template('random_number.html')
+  return render_template('random_number.html',
+                         number=session.get('random_num'),
+                         translated_num=session.get('translated_num'))
 
 
 @app.route('/refresh', methods=['GET'])
 def refresh_number():
   session['random_num'] = random.randint(1, 100)
-  tts = gTTS(text=number_to_french_words(session.get('random_num')), lang='fr')
+  session['translated_num'] = number_to_french_words(session.get('random_num'))
+  tts = gTTS(text=session.get('translated_num'), lang='fr')
   audio_file_path = "static/translated_number.mp3"
   tts.save(audio_file_path)
-  return jsonify(result="Refreshed")
-
-
-@app.route('/reveal', methods=['GET'])
-def reveal_number():
-  random_num = session.get('random_num')
-  translated_num = number_to_french_words(session.get('random_num'))
-  return jsonify(translated_num=translated_num, number=random_num)
+  return jsonify(result="Refreshed",
+                 number=session.get('random_num'),
+                 translated_num=session.get('translated_num'))
 
 
 if __name__ == "__main__":
