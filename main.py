@@ -52,8 +52,10 @@ def guess_number():
 
 @app.route('/reveal', methods=['GET'])
 def reveal_number():
+  random_num = session.get('random_num')
   translated_num = number_to_french_words(session.get('random_num'))
-  return jsonify(translated_num=translated_num)
+  #return jsonify(translated_num=translated_num)
+  return jsonify(translated_num=translated_num, number=random_num)
 
 
 if __name__ == "__main__":

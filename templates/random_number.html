@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1 id="translated-num"></h1>
+    <p id="numberDisplay"></p>
     <audio controls>
         <source src="/static/translated_number.mp3?{{ cache_buster }}" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -13,7 +14,7 @@
     <form id="guess-form">
         <label for="guess">Enter your guess:</label><br>
         <input type="number" id="guess" name="guess" min="1" max="100"><br>
-        <input type="submit" value="Submit">
+      <!--<input type="submit" value="Submit">-->
     </form>
     <p id="message"></p>
     <button onclick="location.reload();">Refresh</button>
@@ -44,6 +45,7 @@
           type: 'GET',
           success: function(response){
             $("#translated-num").text("Random Number: " + response.translated_num);
+            $('#numberDisplay').text(response.number);
           },
           error: function(error){
             console.log(error);
