@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html>
+  <div class="container">
+    <div class="row">
+      <div class="col">
 <head>
   <title>Guess the Number</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100">
   <div class="text-center">
@@ -13,11 +19,17 @@
       Your browser does not support the audio element.
     </audio>
     <br>
-    <input type="number" id="numberInput" onchange="compareNumber()" min="1" max="100" class="form-control mb-2" style="width: auto; display: inline-block;">
+    <input type="number" id="numberInput" onchange="compareNumber()" class="form-control mb-2" style="width: auto; display: inline-block;">
     <button onclick="revealNumber()" class="btn btn-primary mb-2">Reveal</button>
     <br>
-    <button onclick="refreshNumber()" class="btn btn-secondary mb-2">Refresh</button>
+    <button onclick="refreshNumber()" class="btn btn-secondary mb-2">Noob<br>1 - 10</button>
+    <button onclick="refreshNumber2()" class="btn btn-success mb-2">Beginner<br>11 - 100</button>
+    <button onclick="refreshNumber3()" class="btn btn-warning mb-2">Advanced<br>101 - 1000</button>
+    <button onclick="refreshNumber4()" class="btn btn-danger mb-2">Legend<br>1001 - 10M</button>
     <p id="message"></p>
+  </div>
+    </div>
+    </div>
   </div>
   <script>
     var number = "{{ number }}";
@@ -36,16 +48,61 @@
         });
     }
 
+    function refreshNumber2() {
+      fetch('/refresh2')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
+          document.querySelector('audio').load();
+          document.getElementById('numberInput').value = '';  // Clear the input box
+          document.getElementById('message').textContent = '';  // Clear the message
+          number = data.number;
+          translatedNum = data.translated_num;
+        });
+    }
+
+    function refreshNumber3() {
+      fetch('/refresh3')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
+          document.querySelector('audio').load();
+          document.getElementById('numberInput').value = '';  // Clear the input box
+          document.getElementById('message').textContent = '';  // Clear the message
+          number = data.number;
+          translatedNum = data.translated_num;
+        });
+    }
+
+    function refreshNumber4() {
+      fetch('/refresh4')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
+          document.querySelector('audio').load();
+          document.getElementById('numberInput').value = '';  // Clear the input box
+          document.getElementById('message').textContent = '';  // Clear the message
+          number = data.number;
+          translatedNum = data.translated_num;
+        });
+    }
+    
+    
     function revealNumber() {
       document.getElementById('message').textContent = 'The number was ' + number + ', which is ' + translatedNum + ' in French.';
     }
-
     function compareNumber() {
       var userNumber = document.getElementById('numberInput').value;
+      var messageElement = document.getElementById('message');
+      var audioElement = new Audio('{{ url_for('static', filename='correct_guess.mp3') }}'); 
+      messageElement.classList.remove('animate__animated','animate__bounceIn');
+      void messageElement.offsetWidth;
       if (userNumber == number) {
-        document.getElementById('message').textContent = 'Congratulations! You guessed the number correctly.';
+        messageElement.textContent = 'Congratulations! You guessed the number correctly.';
+        messageElement.className = 'animate__animated animate__bounceIn';
+        audioElement.play();  // Play the sound effect
       } else {
-        document.getElementById('message').textContent = 'That\'s not correct, but don\'t give up! Try again!';
+        messageElement.textContent = 'That\'s not correct, but don\'t give up! Try again!';
       }
     }
   </script>
