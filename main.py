@@ -25,45 +25,9 @@ def display_random_number():
                          translated_num=session.get('translated_num'))
 
 
-@app.route('/refresh', methods=['GET'])
-def refresh_number():
-  session['random_num'] = random.randint(1, 10)
-  session['translated_num'] = number_to_french_words(session.get('random_num'))
-  tts = gTTS(text=session.get('translated_num'), lang='fr')
-  audio_file_path = "static/translated_number.mp3"
-  tts.save(audio_file_path)
-  return jsonify(result="Refreshed",
-                 number=session.get('random_num'),
-                 translated_num=session.get('translated_num'))
-
-
-@app.route('/refresh2', methods=['GET'])
-def refresh_number2():
-  session['random_num'] = random.randint(11, 100)
-  session['translated_num'] = number_to_french_words(session.get('random_num'))
-  tts = gTTS(text=session.get('translated_num'), lang='fr')
-  audio_file_path = "static/translated_number.mp3"
-  tts.save(audio_file_path)
-  return jsonify(result="Refreshed",
-                 number=session.get('random_num'),
-                 translated_num=session.get('translated_num'))
-
-
-@app.route('/refresh3', methods=['GET'])
-def refresh_number3():
-  session['random_num'] = random.randint(101, 1000)
-  session['translated_num'] = number_to_french_words(session.get('random_num'))
-  tts = gTTS(text=session.get('translated_num'), lang='fr')
-  audio_file_path = "static/translated_number.mp3"
-  tts.save(audio_file_path)
-  return jsonify(result="Refreshed",
-                 number=session.get('random_num'),
-                 translated_num=session.get('translated_num'))
-
-
-@app.route('/refresh4', methods=['GET'])
-def refresh_number4():
-  session['random_num'] = random.randint(1001, 10000000)
+@app.route('/refresh/<int:min>/<int:max>', methods=['GET'])
+def refresh_number(min, max):
+  session['random_num'] = random.randint(min, max)
   session['translated_num'] = number_to_french_words(session.get('random_num'))
   tts = gTTS(text=session.get('translated_num'), lang='fr')
   audio_file_path = "static/translated_number.mp3"

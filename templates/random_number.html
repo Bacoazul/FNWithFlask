@@ -22,89 +22,23 @@
     <input type="number" id="numberInput" onchange="compareNumber()" class="form-control mb-2" style="width: auto; display: inline-block;">
     <button onclick="revealNumber()" class="btn btn-primary mb-2">Reveal</button>
     <br>
-    <button onclick="refreshNumber()" class="btn btn-secondary mb-2">Noob<br>1 - 10</button>
-    <button onclick="refreshNumber2()" class="btn btn-success mb-2">Beginner<br>11 - 100</button>
-    <button onclick="refreshNumber3()" class="btn btn-warning mb-2">Advanced<br>101 - 1000</button>
-    <button onclick="refreshNumber4()" class="btn btn-danger mb-2">Legend<br>1001 - 10M</button>
+    <button onclick="refreshNumber('/refresh/1/10')" class="btn btn-secondary mb-2">Noob<br>1 - 10</button>
+    <button onclick="refreshNumber('/refresh/11/100')" class="btn btn-success mb-2">Beginner<br>11 - 100</button>
+    <button onclick="refreshNumber('/refresh/101/1000')" class="btn btn-warning mb-2">Advanced<br>101 - 1000</button>
+    <button onclick="refreshNumber('/refresh/1001/10000000')" class="btn btn-danger mb-2">Legend<br>1001 - 10M</button>
     <p id="message"></p>
   </div>
     </div>
     </div>
   </div>
   <script>
-    var number = "{{ number }}";
-    var translatedNum = "{{ translated_num }}";
-
-    function refreshNumber() {
-      fetch('/refresh')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
-          document.querySelector('audio').load();
-          document.getElementById('numberInput').value = '';  // Clear the input box
-          document.getElementById('message').textContent = '';  // Clear the message
-          number = data.number;
-          translatedNum = data.translated_num;
-        });
-    }
-
-    function refreshNumber2() {
-      fetch('/refresh2')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
-          document.querySelector('audio').load();
-          document.getElementById('numberInput').value = '';  // Clear the input box
-          document.getElementById('message').textContent = '';  // Clear the message
-          number = data.number;
-          translatedNum = data.translated_num;
-        });
-    }
-
-    function refreshNumber3() {
-      fetch('/refresh3')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
-          document.querySelector('audio').load();
-          document.getElementById('numberInput').value = '';  // Clear the input box
-          document.getElementById('message').textContent = '';  // Clear the message
-          number = data.number;
-          translatedNum = data.translated_num;
-        });
-    }
-
-    function refreshNumber4() {
-      fetch('/refresh4')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('audioSource').src = "{{ url_for('static', filename='translated_number.mp3') }}?cb=" + Date.now();
-          document.querySelector('audio').load();
-          document.getElementById('numberInput').value = '';  // Clear the input box
-          document.getElementById('message').textContent = '';  // Clear the message
-          number = data.number;
-          translatedNum = data.translated_num;
-        });
-    }
-    
-    
-    function revealNumber() {
-      document.getElementById('message').textContent = 'The number was ' + number + ', which is ' + translatedNum + ' in French.';
-    }
-    function compareNumber() {
-      var userNumber = document.getElementById('numberInput').value;
-      var messageElement = document.getElementById('message');
-      var audioElement = new Audio('{{ url_for('static', filename='correct_guess.mp3') }}'); 
-      messageElement.classList.remove('animate__animated','animate__bounceIn');
-      void messageElement.offsetWidth;
-      if (userNumber == number) {
-        messageElement.textContent = 'Congratulations! You guessed the number correctly.';
-        messageElement.className = 'animate__animated animate__bounceIn';
-        audioElement.play();  // Play the sound effect
-      } else {
-        messageElement.textContent = 'That\'s not correct, but don\'t give up! Try again!';
-      }
-    }
+    // Set the variables
+    window.number = "{{ number }}";
+    window.translatedNum = "{{ translated_num }}";
+    window.audioSourceUrl = "{{ url_for('static', filename='translated_number.mp3') }}";
+    window.correctGuessUrl = "{{ url_for('static', filename='correct_guess.mp3') }}";
   </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>
